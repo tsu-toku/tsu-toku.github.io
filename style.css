@@ -1,0 +1,104 @@
+html,body{
+  padding:0;
+  margin:0;
+}
+
+p{
+    margin: 0;
+}
+
+div{
+    overflow-wrap: normal;
+}
+
+iframe{
+    border-style: none;
+}
+
+h2{
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+h3{
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/**scrollのバーが邪魔になって画面がズレるので**/
+/**widthとheightは100vh、100vwで画面いっぱいにしておきます。**/
+.base{
+    display:flex;
+    flex-direction:row;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+}
+
+/**右のメインになる画面です。**/
+.mainpage{
+    flex-grow: 1;
+    height:100%;
+    background-image:url(img/bg_1.jpg);
+    background-size: 50%; 
+}
+
+/**iframeを表示する領域。**/
+.sidebar{
+    width:200px;
+    height:100%;
+    background-image:url(img/bg_2.jpg);
+    background-size: 100%;
+
+    border-style: none;
+    border-right: 5px whitesmoke;
+    border-right-style: solid;
+}
+/**iframe内のページの広さをiframeの幅に合わせる。**/
+/**これがないと縦だけでなく横方面にもスクロールバーが出てみっともないです。**/
+.menu{
+	width:100%;
+}
+
+.parent {
+    overflow: hidden;
+}
+
+.contents{
+    background-color: aqua;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    padding:10px;
+}
+
+.quote{
+    background-color: rgb(200,240,240);
+    border: solid 2px lightgray;
+}
+
+.bold_3{
+    font-weight: 900;
+}
+
+.bold_2{
+    font-weight: 700;
+}
+
+.small{
+    font-size: 12px;
+}
+
+
+
+/**以下各id**/
+
+#accesscounter{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: aqua;
+}
+
+#pageindex{
+    list-style: square;
+}

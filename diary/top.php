@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <title>Document</title>
+</head>
+<body onload="load()">
+    <?php
+        $diarymonth = glob('data/*');
+    ?>
+    <div id="header">
+        <img src="../img/diaryicon.png" style="width: 370px; height:100px; margin: 10px;">
+    </div>
+    <div id="indexpage" class="contents">
+        <div id="newest" class="quote">
+            <h3 style="margin-top: 5px;">今日の日記</h3>
+            <div id="newest_diary"></div>
+        </div>
+        <div>
+            <?php
+                foreach ($diarymonth as $tmp) {
+                    echo $tmp."<br>";
+                }
+            ?>
+        </div>
+    </div>
+    <script>
+    </script>
+</body>
+</html>
