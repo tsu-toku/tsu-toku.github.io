@@ -25,6 +25,16 @@ h3{
     margin-bottom: 5px;
 }
 
+h4{
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
+ul{
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
 /**scrollのバーが邪魔になって画面がズレるので**/
 /**widthとheightは100vh、100vwで画面いっぱいにしておきます。**/
 .base{
