@@ -1,0 +1,32 @@
+body {
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+}
+
+.tbcontents{
+    background-color: aqua;
+    margin-right: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top:10px;
+    padding-left:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+}
+
+.kansi{
+    background-color: rgb(200,240,240);
+    border: solid 2px lightgray;
+    padding: 8px;
+    font-family: 'ＭＳ Ｐ明朝','serif';
+    font-size: 20px;
+    letter-spacing: 5px;
+    line-height: 25px;
+    height: 180px;
+}
+
+.inner{
+    padding: 0px;
+    text-align: center;
+    height: 180px;
+}

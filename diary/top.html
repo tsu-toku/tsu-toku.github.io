@@ -13,29 +13,16 @@
     <div id="indexpage" class="contents">
         <div id="newest" class="quote">
             <h3 style="margin-top: 5px;">今日の日記</h3>
-            <div id="newest_diary"></div>
+            <div id="newest_diary">テスト投稿。毎日更新できたらいいのですが...</div>
         </div>
-        <div>
+        <div id="memory">
+            <div id="diary_080323">
+                <b>令和８年３月23日</b><br>
+                テスト投稿。毎日更新できたらいいのですが...
+            </div>
         </div>
     </div>
     <script>
-        function load(){
-            let filePath = "data/26_3.csv"
-        var csvData = new Array();
-        var data = new XMLHttpRequest();
-        data.open("GET", filePath, false); //true:非同期,false:同期
-        data.send(null);
-
-        var LF = String.fromCharCode(10); //改行コード
-        var lines = data.responseText.split(LF);
-
-        for (var i = 0; i < lines.length;++i) {
-            var cells = lines[i].split(",");
-            if( cells.length != 1 ) csvData.push(cells);
-        }
-        console.log(csvData);
-        }
-
     </script>
 </body>
 </html>
