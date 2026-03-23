@@ -99,6 +99,17 @@ ul{
     font-size: 12px;
 }
 
+/*太字としてのh*/
+.txth{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.txtdiv{
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
 
 
 /**以下各id**/
