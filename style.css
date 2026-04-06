@@ -15,6 +15,10 @@ iframe{
     border-style: none;
 }
 
+h1{
+    margin-left: 10px;
+}
+
 h2{
     margin-top: 20px;
     margin-bottom: 5px;
