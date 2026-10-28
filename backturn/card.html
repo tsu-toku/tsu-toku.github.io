@@ -12,6 +12,7 @@
         <div class="progress" id="progress"></div>
     </header>
     <div class="cardbox">
+        <input type="file" accept=".csv" onchange="fileInput()" id="selectFile" hidden>
         <div class="cardtitle" id="cardtitle"></div>
         <button class="card" onclick="flip()" id="cardback">
             <div class="cardtext" id="card"></div>
@@ -31,7 +32,10 @@
     let yetOnly = Boolean(Number(urlParams.get('only')));
     const HTMode = !Boolean(Number(urlParams.get('ht')));
     const again = Boolean(Number(urlParams.get('ag')));
+    const outerFile = Boolean(Number(urlParams.get('ot')));
+    const path = urlParams.get('pt')
 
+    let selectFile = document.getElementById("selectFile");
     let card = document.getElementById("card");
     let cardback = document.getElementById("cardback");
     let progressText = document.getElementById("progress");
@@ -42,7 +46,7 @@
 
     let indexList = [];
     let indexIndex = 0;
-    let currentIndex;
+    let currentIndex = 0;
     let isTail = false;
 
     function init(){
@@ -52,86 +56,98 @@
         let cookieList;
         console.log(cookieList);
 
-        var request = new XMLHttpRequest();
-        request.open("GET", wordlistPath + listId + ".csv", true);
-        request.send(null);
-        request.onload = function () {
-            console.log(request.responseText);
-            var tmp = request.responseText.split("\n");
-            for (let i = 0; i < tmp.length; ++i) {
-                word_list[i] = tmp[i].split(',');
-            }
-            console.log(word_list);
-
-            let cookieTmp1 = document.cookie;
-            let cookieTmp2 = cookieTmp1.split("; ");
-            let cookieTmp3,cookieTmp4;
-            let cookieIndex;
-
-            //cookieIndexに入るべき値がある→既に解いたことがある　かどうか
-            let hasSet = true;
-
-            progressList = Array.from({ length: (word_list.length - 1) }, () => 0);
-            for(let i = 0; i < cookieTmp2.length; i++){
-                cookieTmp3 = cookieTmp2[i].split("=");
-                if(cookieTmp3[0] == listId + "c"){
-                    cookieTmp4 = cookieTmp3[1].split("n");
-                    cookieList = cookieTmp4[0];
-                    try{
-                        cookieIndex = cookieTmp4[1].split("q");
-                        indexIndex = Number(cookieIndex[0]);
-                    }catch(e){
-                        console.log(e);
-                        hasSet = false;
-                    }
-                    console.log(cookieList);
-                    console.log(cookieIndex);
-                    for(let j = 0; j < cookieList.length; j++){
-                        progressList[j] = Boolean(Number(cookieList.charAt(j)));
-                    }
-                    break;
+        if(outerFile){
+            selectFile.hidden = false;
+        }else{
+            var request = new XMLHttpRequest();
+            request.open("GET", wordlistPath + listId + ".csv", true);
+            request.send(null);
+            request.onload = function () {
+                console.log(request.responseText);
+                var tmp = request.responseText.split("\n");
+                for (let i = 0; i < tmp.length; ++i) {
+                    word_list[i] = tmp[i].split(',');
                 }
+                console.log(word_list);
+
+                fileInit();
             }
-            console.log(progressList);
-            console.log(word_list[0][0]);
-            cardtitle.innerHTML = word_list[0][0];
-
-            if(again && hasSet){
-                for(let i = 0; i < cookieIndex.length - 1; i++){
-                    indexList.push(Number(cookieIndex[i+1]));
-                }
-            }else{
-                //インデックス配列にインデックスを挿入・未完問題だけの場合はprogressが1のインデックスのみ
-                for(let i = 0; i < word_list.length - 1; i++){
-                    if((yetOnly && !progressList[i]) || !yetOnly){
-                        indexList.push(i + 1);
-                    }
-                }
-
-                //シャッフルオンの場合のみインデックス配列を並び替え
-                if(isRandom){
-                    for(let i = (indexList.length - 1); 0 < i; i--){
-
-                        // 0〜(i+1)の範囲で値を取得
-                        let r = Math.floor(Math.random() * (i + 1));
-
-                        // 要素の並び替えを実行
-                        let tmp = indexList[i];
-                        indexList[i] = indexList[r];
-                        indexList[r] = tmp;
-                    }
-                }
-            }
-
-            if(indexList.length == 0){
-                alert("この単語帳は既に全完されています。")
-            }
-            console.log(indexList);
-            currentIndex = indexList[indexIndex];
-            //NXORで裏表を指定
-            setCard();
-            progressText.innerHTML = (indexIndex + 1) + "/" + (indexList.length);
         }
+    }
+
+    function fileInit(){
+        let cookieTmp1 = document.cookie;
+        let cookieTmp2 = cookieTmp1.split("; ");
+        let cookieTmp3,cookieTmp4;
+        let cookieIndex;
+
+        //cookieIndexに入るべき値がある→既に解いたことがある　かどうか
+        let hasSet = true;
+
+        progressList = Array.from({ length: (word_list.length - 1) }, () => 0);
+        for(let i = 0; i < cookieTmp2.length; i++){
+            cookieTmp3 = cookieTmp2[i].split("=");
+            if(cookieTmp3[0] == listId + "c"){
+                cookieTmp4 = cookieTmp3[1].split("n");
+                cookieList = cookieTmp4[0];
+                try{
+                    cookieIndex = cookieTmp4[1].split("q");
+                    indexIndex = Number(cookieIndex[0]);
+                    if(indexIndex > word_list.length - 1){
+                        indexIndex = 0;
+                    }
+                }catch(e){
+                    console.log(e);
+                    hasSet = false;
+                }
+                console.log(cookieList);
+                console.log(cookieIndex);
+                for(let j = 0; j < cookieList.length; j++){
+                    progressList[j] = Boolean(Number(cookieList.charAt(j)));
+                }
+                break;
+            }
+        }
+        console.log(progressList);
+        console.log(word_list[0][0]);
+        cardtitle.innerHTML = word_list[0][0];
+
+        if(again && hasSet){
+            for(let i = 0; i < cookieIndex.length - 1; i++){
+                indexList.push(Number(cookieIndex[i+1]));
+            }
+        }else{
+            //インデックス配列にインデックスを挿入・未完問題だけの場合はprogressが1のインデックスのみ
+            for(let i = 0; i < word_list.length - 1; i++){
+                if((yetOnly && !progressList[i]) || !yetOnly){
+                    indexList.push(i + 1);
+                }
+            }
+
+            //シャッフルオンの場合のみインデックス配列を並び替え
+            if(isRandom){
+                for(let i = (indexList.length - 1); 0 < i; i--){
+
+                    // 0〜(i+1)の範囲で値を取得
+                    let r = Math.floor(Math.random() * (i + 1));
+
+                    // 要素の並び替えを実行
+                    let tmp = indexList[i];
+                    indexList[i] = indexList[r];
+                    indexList[r] = tmp;
+                }
+            }
+        }
+
+        if(indexList.length == 0){
+            alert("この単語帳は既に全完されています。");
+        }
+        console.log(indexList,currentIndex);
+        currentIndex = indexList[indexIndex];
+        console.log(currentIndex,indexList,indexIndex)
+        //NXORで裏表を指定
+        setCard();
+        progressText.innerHTML = (indexIndex + 1) + "/" + (indexList.length);
     }
 
     function flip(){
@@ -188,6 +204,7 @@
     }
 
     function setCard(){
+        console.log(currentIndex)
         card.innerHTML = word_list[currentIndex][Number((HTMode && isTail) || (!HTMode && !isTail))];
         if((HTMode && isTail) || (!HTMode && !isTail)){
             cardback.classList.remove("que");
@@ -195,6 +212,25 @@
         }else{
             cardback.classList.remove("ans");
             cardback.classList.add("que");
+        }
+    }
+
+    function fileInput(){
+        let selectFile = document.getElementById("selectFile");
+        console.log(selectFile.files[0]);
+        var reader = new FileReader();
+        //テキスト形式で読み込む
+        reader.readAsText(selectFile.files[0]);
+        reader.onload = function(){
+            //テキストエリアに表示する
+            console.log(reader.result);
+            var tmp = reader.result.split("\n");
+            for (let i = 0; i < tmp.length; ++i) {
+                word_list[i] = tmp[i].split(',');
+            }
+            console.log(word_list);
+
+            fileInit();
         }
     }
 </script>
