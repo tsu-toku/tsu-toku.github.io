@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爆速単語帳</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body onload="init()">
+    <header>
+        <button class="close" onclick="listClose()">×</button>
+        <div class="progress" id="progress"></div>
+    </header>
+    <div class="cardbox">
+        <div class="cardtitle" id="cardtitle"></div>
+        <button class="card" onclick="flip()" id="cardback">
+            <div class="cardtext" id="card"></div>
+        </button>
+        <div class="progressbuttons">
+            <button onclick="nextCard(0)">×</button>
+            <button onclick="nextCard(1)">◯</button>
+        </div>
+    </div>
+</body>
+<script>
+    const wordlistPath = "wordlist/";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const listId = Number(urlParams.get('list'));
+    const isRandom = Boolean(Number(urlParams.get('rand')));
+    let yetOnly = Boolean(Number(urlParams.get('only')));
+    const HTMode = !Boolean(Number(urlParams.get('ht')));
+    const again = Boolean(Number(urlParams.get('ag')));
+
+    let card = document.getElementById("card");
+    let cardback = document.getElementById("cardback");
+    let progressText = document.getElementById("progress");
+    let cardtitle = document.getElementById("cardtitle");
+
+    let word_list = [];
+    let progressList;
+
+    let indexList = [];
+    let indexIndex = 0;
+    let currentIndex;
+    let isTail = false;
+
+    function init(){
+        //1c = 001012001n3p1q2q3q4q5q1;
+        //1c：1.csv 0:学習中 1:知っている 2:学習中＋ここで終了 3:知っている+ここで終了
+        //n3p1q2q3q4q5q1→2,3,4,5,1のインデックスの並びで、3番目で終了していた、p1なので、only=1
+        let cookieList;
+        console.log(cookieList);
+
+        var request = new XMLHttpRequest();
+        request.open("GET", wordlistPath + listId + ".csv", true);
+        request.send(null);
+        request.onload = function () {
+            console.log(request.responseText);
+            var tmp = request.responseText.split("\n");
+            for (let i = 0; i < tmp.length; ++i) {
+                word_list[i] = tmp[i].split(',');
+            }
+            console.log(word_list);
+
+            let cookieTmp1 = document.cookie;
+            let cookieTmp2 = cookieTmp1.split("; ");
+            let cookieTmp3,cookieTmp4;
+            let cookieIndex;
+
+            //cookieIndexに入るべき値がある→既に解いたことがある　かどうか
+            let hasSet = true;
+
+            progressList = Array.from({ length: (word_list.length - 1) }, () => 0);
+            for(let i = 0; i < cookieTmp2.length; i++){
+                cookieTmp3 = cookieTmp2[i].split("=");
+                if(cookieTmp3[0] == listId + "c"){
+                    cookieTmp4 = cookieTmp3[1].split("n");
+                    cookieList = cookieTmp4[0];
+                    try{
+                        cookieIndex = cookieTmp4[1].split("q");
+                        indexIndex = Number(cookieIndex[0]);
+                    }catch(e){
+                        console.log(e);
+                        hasSet = false;
+                    }
+                    console.log(cookieList);
+                    console.log(cookieIndex);
+                    for(let j = 0; j < cookieList.length; j++){
+                        progressList[j] = Boolean(Number(cookieList.charAt(j)));
+                    }
+                    break;
+                }
+            }
+            console.log(progressList);
+            console.log(word_list[0][0]);
+            cardtitle.innerHTML = word_list[0][0];
+
+            if(again && hasSet){
+                for(let i = 0; i < cookieIndex.length - 1; i++){
+                    indexList.push(Number(cookieIndex[i+1]));
+                }
+            }else{
+                //インデックス配列にインデックスを挿入・未完問題だけの場合はprogressが1のインデックスのみ
+                for(let i = 0; i < word_list.length - 1; i++){
+                    if((yetOnly && !progressList[i]) || !yetOnly){
+                        indexList.push(i + 1);
+                    }
+                }
+
+                //シャッフルオンの場合のみインデックス配列を並び替え
+                if(isRandom){
+                    for(let i = (indexList.length - 1); 0 < i; i--){
+
+                        // 0〜(i+1)の範囲で値を取得
+                        let r = Math.floor(Math.random() * (i + 1));
+
+                        // 要素の並び替えを実行
+                        let tmp = indexList[i];
+                        indexList[i] = indexList[r];
+                        indexList[r] = tmp;
+                    }
+                }
+            }
+
+            if(indexList.length == 0){
+                alert("この単語帳は既に全完されています。")
+            }
+            console.log(indexList);
+            currentIndex = indexList[indexIndex];
+            //NXORで裏表を指定
+            setCard();
+            progressText.innerHTML = (indexIndex + 1) + "/" + (indexList.length);
+        }
+    }
+
+    function flip(){
+        isTail = !isTail;
+        setCard();
+    }
+
+    function nextCard(type){
+        console.log(type);
+        progressList[currentIndex - 1] = Boolean(type);
+        console.log(progressList);
+
+        isTail = false;
+        indexIndex++;
+        currentIndex = indexList[indexIndex];
+
+        if(indexIndex == indexList.length){
+            let count = 0;
+            for(let tmp of progressList){
+                console.log(tmp);
+                if(tmp) count++;
+            }
+            alert("カード完了\n結果　　学習中：" + (word_list.length - 1 - count) + "　　知っている：" + count);
+            cardEnd(false);
+            return;
+        }
+
+        setCard();
+        progressText.innerHTML = (indexIndex + 1) + "/" + (indexList.length);
+    }
+
+    function listClose(){
+        console.log("aa");
+        if(window.confirm('単語帳を途中で終了しますか？(履歴は残ります)')){
+            cardEnd(true);
+        }
+    }
+
+    function cardEnd(type){
+        let savetext = listId + "c=";
+        for(let i = 0; i < progressList.length; i++){
+            savetext += Number(progressList[i]);
+        }
+        if(type){
+            savetext += ("n" + (indexIndex));
+            for(let tmp of indexList){
+                console.log(tmp);
+                savetext += ("q" + tmp);
+            }
+            document.cookie = savetext;
+            location.href = "index.html"
+        }
+        document.cookie = savetext;
+    }
+
+    function setCard(){
+        card.innerHTML = word_list[currentIndex][Number((HTMode && isTail) || (!HTMode && !isTail))];
+        if((HTMode && isTail) || (!HTMode && !isTail)){
+            cardback.classList.remove("que");
+            cardback.classList.add("ans");
+        }else{
+            cardback.classList.remove("ans");
+            cardback.classList.add("que");
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,93 @@
+body{
+    margin: 0;
+}
+
+header{
+    width: 100%;
+    background-color: lightgray;
+    height: 70px;
+    position: inherit;
+}
+
+.progress{
+    position:absolute;
+    text-align: center;
+    top:20px;
+    width: 80px;
+    left: calc(50vw - 40px);
+
+    font-size: 22px;
+}
+
+.close{
+    text-align: center;
+
+    position:absolute;
+    width: 40px;
+    right: 0px;
+    height: 70px;
+
+    font-size: 22px;
+    background: lightgray;
+    border: none;
+}
+
+.cardbox{
+    padding: 10px 20px 0px 20px;
+}
+
+.cardtitle{
+    margin: auto;
+    max-width: 800px;
+    width: calc(100% - 40px);
+
+    font-size: 22px;
+}
+
+.card{
+    margin: auto;
+    margin-top: 10px;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    max-width: 800px;
+    width: calc(100% - 40px);
+
+    height: 52vh;
+
+    background-color: beige;
+}
+
+.cardtext{
+    margin: auto;
+    font-size: 25px;
+}
+
+.progressbuttons{
+    margin: auto;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+}
+
+.progressbuttons button{
+    width: 50%;
+    height: 10vh;
+    margin: 5px;
+    font-size: 25px;
+}
+
+
+/*カード色*/
+.que{
+    background-color: #fffff7;
+}
+
+.ans{
+    background-color: #fbfbff;
+}
